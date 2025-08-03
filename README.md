@@ -16,12 +16,14 @@ A full-stack MERN application that replicates core LinkedIn functionality includ
   - View own profile and other users' profiles
   - Edit profile functionality
   - Profile route supports both `/profile` (own) and `/profile/:userId` (others)
+  - Upload and set profile as well background cover photo
 
 - **Post Management**
   - Create text-only posts
   - Public post feed with author names and timestamps
   - View all posts by a specific user
   - Real-time post display
+  - User can delete their specific posts
 
 - **Modern UI/UX**
   - Responsive design with Tailwind CSS
