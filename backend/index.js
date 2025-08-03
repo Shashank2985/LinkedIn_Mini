@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
+
+// Load environment variables FIRST
 dotenv.config();
 
 import express from "express";
-import path from "path"; // 👈 import here
-import { fileURLToPath } from "url"; // 👈 necessary for ES modules
 import connectDB from "./config/db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -16,46 +16,38 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 const app = express();
 connectDB();
 
-// __dirname workaround for ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// CORS setup
+// CORS configuration for credentials
 const allowedOrigins = [
     process.env.FRONTEND_URL,
     "http://localhost:5173",
+    "http://localhost:5176",
+    "https://mini-linked-in-gilt.vercel.app"
 ].filter(Boolean);
 
 app.use(cors({
     origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, etc.)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) {
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            callback(new Error("Not allowed by CORS"));
+            callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true
 }));
 
-app.use(express.json());
-app.use(cookieParser());
+app.use(express.json()); // for JSON body parsing
+app.use(cookieParser()); // for parsing cookies
 
-// API Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// ⚠️ Place this after API routes
-if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../frontend/dist")));
-    app.get("*", (req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-    });
-}
-
-// Base route for sanity check
+// Base route
 app.get("/", (req, res) => {
     res.send("Mini LinkedIn API is running...");
 });

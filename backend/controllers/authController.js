@@ -25,7 +25,15 @@ export const register = async (req, res) => {
         });
 
         res.status(201).json({
-            user: { id: user._id, name, email, bio },
+            user: { 
+                _id: user._id, 
+                id: user._id, 
+                name, 
+                email, 
+                bio, 
+                profileImage: user.profileImage, 
+                backgroundImage: user.backgroundImage 
+            },
             message: "Registration successful"
         });
     } catch (err) {
