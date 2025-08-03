@@ -35,19 +35,19 @@ const Home = () => {
     const handleImageSelect = (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        
+
         if (!file.type.startsWith('image/')) {
             setError('Only image files are allowed');
             return;
         }
-        
+
         if (file.size > 5 * 1024 * 1024) {
             setError('Image size must be under 5MB');
             return;
         }
-        
+
         setSelectedImage(file);
-        
+
         // Create preview
         const reader = new FileReader();
         reader.onload = (e) => setImagePreview(e.target.result);
@@ -63,20 +63,20 @@ const Home = () => {
     const uploadImage = async (file) => {
         const formData = new FormData();
         formData.append('image', file);
-        
+
         const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
         const response = await fetch(`${API_BASE_URL}/upload/image`, {
             method: 'POST',
             credentials: 'include',
             body: formData,
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ message: 'Failed to upload image' }));
             console.error('Image upload failed:', errorData);
             throw new Error(errorData.message || 'Failed to upload image');
         }
-        
+
         const data = await response.json();
         return data.imageUrl;
     };
@@ -89,16 +89,16 @@ const Home = () => {
         setUploadingImage(!!selectedImage);
         try {
             let imageUrl = null;
-            
+
             // Upload image first if selected
             if (selectedImage) {
                 imageUrl = await uploadImage(selectedImage);
                 setUploadingImage(false);
             }
-            
-            const postData = await postsAPI.createPost({ 
+
+            const postData = await postsAPI.createPost({
                 content: newPost,
-                image: imageUrl 
+                image: imageUrl
             });
 
             // Add the new post to the beginning of the posts array
@@ -282,9 +282,9 @@ const Home = () => {
                                 </div>
                             ) : (
                                 posts.map((post) => (
-                                    <PostCard 
-                                        key={post._id} 
-                                        post={post} 
+                                    <PostCard
+                                        key={post._id}
+                                        post={post}
                                         showDelete={true}
                                         onDelete={(deletedId) => setPosts(prev => prev.filter(p => p._id !== deletedId))}
                                     />
