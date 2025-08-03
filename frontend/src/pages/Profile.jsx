@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { usersAPI, authAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
@@ -45,6 +45,39 @@ const Profile = () => {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-4 border-pink-200 border-t-pink-600 mx-auto"></div>
                     <p className="mt-6 text-gray-700 text-lg font-medium">Loading profile...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Show login prompt if user is not authenticated
+    if (!currentUser) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white flex items-center justify-center">
+                <div className="max-w-md w-full mx-4">
+                    <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-8 text-center">
+                        <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Profile Access Required</h2>
+                        <p className="text-gray-600 mb-8">Please login to view profiles and connect with professionals.</p>
+                        <div className="space-y-3">
+                            <Link 
+                                to="/login" 
+                                className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 px-6 rounded-lg font-medium hover:from-pink-600 hover:to-pink-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105 block text-center"
+                            >
+                                Sign In
+                            </Link>
+                            <Link 
+                                to="/register" 
+                                className="w-full border-2 border-pink-500 text-pink-600 py-3 px-6 rounded-lg font-medium hover:bg-pink-50 transition-all duration-200 block text-center"
+                            >
+                                Join Now
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

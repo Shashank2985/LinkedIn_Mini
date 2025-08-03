@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { postsAPI } from '../utils/api';
 import PostCard from '../components/PostCard';
 import ProfileCard from '../components/ProfileCard';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
     const { user } = useAuth();
@@ -131,6 +132,42 @@ const Home = () => {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-400 mx-auto"></div>
                     <p className="mt-4 text-gray-600">Loading feed...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Show login prompt if user is not authenticated
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="max-w-md w-full mx-4">
+                    <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-8 text-center">
+                        <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Mini LinkedIn</h2>
+                        <p className="text-gray-600 mb-8">Please login or signup to continue and access your professional network.</p>
+                        <div className="space-y-3">
+                            <Link 
+                                to="/login" 
+                                className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 px-6 rounded-lg font-medium hover:from-pink-600 hover:to-pink-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105 block text-center"
+                            >
+                                Sign In
+                            </Link>
+                            <Link 
+                                to="/register" 
+                                className="w-full border-2 border-pink-500 text-pink-600 py-3 px-6 rounded-lg font-medium hover:bg-pink-50 transition-all duration-200 block text-center"
+                            >
+                                Join Now
+                            </Link>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-6">
+                            Connect with professionals, share your thoughts, and grow your network.
+                        </p>
+                    </div>
                 </div>
             </div>
         );
