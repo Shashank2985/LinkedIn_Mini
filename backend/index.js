@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
-
-// Load environment variables FIRST
 dotenv.config();
 
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -16,38 +16,41 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 const app = express();
 connectDB();
 
-// CORS configuration for credentials
-const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    "http://localhost:5173",
-    "http://localhost:5176",
-    "https://mini-linked-in-gilt.vercel.app"
-].filter(Boolean);
+// __dirname workaround for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// CORS configuration - simplified for single deployment
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (mobile apps, etc.)
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: true, // Allow all origins since we're serving from same domain
     credentials: true
 }));
 
 app.use(express.json()); // for JSON body parsing
 app.use(cookieParser()); // for parsing cookies
 
-// Routes
+// API Routes (must come before static files)
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Base route
+// Serve static files from frontend build
+if (process.env.NODE_ENV === "production") {
+    // Serve static files from the frontend dist directory
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+    // Handle React Router - send all non-API requests to index.html
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+    });
+} else {
+    // Development mode - API status endpoint
+    app.get("/", (req, res) => {
+        res.send("Mini LinkedIn API is running in development mode...");
+    });
+}
+
 app.get("/", (req, res) => {
     res.send("Mini LinkedIn API is running...");
 });
