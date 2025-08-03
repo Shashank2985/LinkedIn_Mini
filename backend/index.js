@@ -3,7 +3,8 @@ dotenv.config();
 
 import express from "express";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import connectDB from "./config/db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -16,9 +17,9 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 const app = express();
 connectDB();
 
-// __dirname workaround for ES modules
+// Proper __dirname workaround for ES modules
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
 // CORS configuration - simplified for single deployment
 app.use(cors({
@@ -36,18 +37,11 @@ app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 
 // Serve static files from frontend build
-if (process.env.NODE_ENV === "production") {
-    // Serve static files from the frontend dist directory
+if (process.env.NODE_ENV === "production" || process.env.PORT === "5000") {
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-    // Handle React Router - send all non-API requests to index.html
     app.get("*", (req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-    });
-} else {
-    // Development mode - API status endpoint
-    app.get("/", (req, res) => {
-        res.send("Mini LinkedIn API is running in development mode...");
+        res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
     });
 }
 
